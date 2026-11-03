@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Pengiriman | BukuKita</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="dashboard.html"><span class="brand-mark small">BK</span> BukuKita</a>
+    <nav aria-label="Navigasi utama">
+        <a href="dashboard.html">Dashboard</a><a href="stok.html">Katalog</a><a href="checkout.html">Pemesanan</a><a href="tracking.html" class="active">Tracking</a><a href="reports.html">Laporan</a><a href="history.html">History</a>
+    </nav>
+</header>
+<main class="container narrow">
+    <section class="hero compact"><div><p class="eyebrow">DELIVERY TRACKING</p><h1>Lacak Pengiriman</h1><p class="muted">Masukkan Nomor Delivery Order untuk melihat status.</p></div><div class="hero-icon">🚚</div></section>
+    <section class="panel">
+        <form id="trackingForm" class="search-form">
+            <div class="form-group grow"><label for="doNumber">Nomor Delivery Order</label><input id="doNumber" placeholder="Contoh: DO-12345678" required></div>
+            <button class="btn btn-primary" type="submit">Cari</button>
+        </form>
+    </section>
+    <section id="trackingResult" class="panel hidden"></section>
+</main>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.getElementById("trackingForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const key = document.getElementById("doNumber").value.trim().toUpperCase();
+    const order = dataPesanan.find(o => o.doNumber.toUpperCase() === key);
+    const result = document.getElementById("trackingResult");
+    result.classList.remove("hidden");
+    if (!order) {
+        result.innerHTML = `<div class="empty-state"><div class="large-icon">🔎</div><h2>Data tidak ditemukan</h2><p>Pastikan Nomor Delivery Order benar.</p></div>`;
+        return;
+    }
+    result.innerHTML = `
+        <div class="result-header"><div><p class="eyebrow">DELIVERY ORDER</p><h2>${order.doNumber}</h2></div><span class="badge success">${order.status}</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:65%"></div></div>
+        <div class="tracking-steps"><span>✓ Pesanan diterima</span><span>✓ Diproses</span><span>● Dikirim</span><span>○ Selesai</span></div>
+        <div class="detail-grid">
+            <div><span>Nama Pemesan</span><strong>${order.nama}</strong></div>
+            <div><span>Ekspedisi</span><strong>JNE Express</strong></div>
+            <div><span>Tanggal Kirim</span><strong>${order.tanggal}</strong></div>
+            <div><span>Jenis Paket</span><strong>Reguler</strong></div>
+            <div><span>Total Pembayaran</span><strong>${formatRupiah(order.total)}</strong></div>
+            <div><span>Alamat</span><strong>${order.alamat}</strong></div>
+        </div>`;
+});
+</script>
+</body>
+</html>

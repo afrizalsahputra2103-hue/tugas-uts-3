@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog & Stok | BukuKita</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="dashboard.html"><span class="brand-mark small">BK</span> BukuKita</a>
+    <nav aria-label="Navigasi utama">
+        <a href="dashboard.html">Dashboard</a><a href="stok.html" class="active">Katalog</a><a href="checkout.html">Pemesanan</a><a href="tracking.html">Tracking</a><a href="reports.html">Laporan</a><a href="history.html">History</a>
+    </nav>
+</header>
+<main class="container">
+    <div class="page-header">
+        <div><p class="eyebrow">KATALOG</p><h1>Informasi Stok Buku</h1><p class="muted">Data berasal dari konstanta <code>dataKatalogBuku</code> pada <code>data.js</code>.</p></div>
+        <button class="btn btn-primary" id="openStockForm" type="button">+ Tambah Stok</button>
+    </div>
+
+    <section class="panel">
+        <div class="toolbar">
+            <input id="searchBook" type="search" placeholder="Cari judul atau penulis..." aria-label="Cari buku">
+            <select id="stockFilter" aria-label="Filter stok"><option value="all">Semua stok</option><option value="available">Tersedia</option><option value="low">Stok rendah</option><option value="empty">Habis</option></select>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Kode</th><th>Judul</th><th>Penulis</th><th>Kategori</th><th>Harga</th><th>Stok</th><th>Status</th></tr></thead>
+                <tbody id="stockTableBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="modal hidden" id="stockModal" role="dialog" aria-modal="true" aria-labelledby="stockTitle">
+        <div class="modal-content">
+            <button class="modal-close" type="button" aria-label="Tutup">&times;</button>
+            <h2 id="stockTitle">Tambah Buku</h2>
+            <form id="stockForm">
+                <div class="form-grid">
+                    <div class="form-group"><label for="bookCode">Kode</label><input id="bookCode" required></div>
+                    <div class="form-group"><label for="bookTitle">Judul</label><input id="bookTitle" required></div>
+                    <div class="form-group"><label for="bookAuthor">Penulis</label><input id="bookAuthor" required></div>
+                    <div class="form-group"><label for="bookCategory">Kategori</label><input id="bookCategory" required></div>
+                    <div class="form-group"><label for="bookPrice">Harga</label><input id="bookPrice" type="number" min="0" required></div>
+                    <div class="form-group"><label for="bookStock">Stok</label><input id="bookStock" type="number" min="0" required></div>
+                </div>
+                <button class="btn btn-primary" type="submit">Simpan Stok</button>
+            </form>
+        </div>
+    </div>
+</main>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+const tbody = document.getElementById("stockTableBody");
+const searchBook = document.getElementById("searchBook");
+const stockFilter = document.getElementById("stockFilter");
+
+function renderStock() {
+    const q = searchBook.value.toLowerCase().trim();
+    const filter = stockFilter.value;
+    const rows = dataKatalogBuku.filter(b => {
+        const match = `${b.judul} ${b.penulis} ${b.kode}`.toLowerCase().includes(q);
+        const status = b.stok === 0 ? "empty" : b.stok <= 3 ? "low" : "available";
+        return match && (filter === "all" || filter === status);
+    });
+    tbody.innerHTML = rows.length ? rows.map(b => {
+        const status = b.stok === 0 ? ["Habis","badge danger"] : b.stok <= 3 ? ["Stok Rendah","badge warning"] : ["Tersedia","badge success"];
+        return `<tr><td>${b.kode}</td><td><strong>${b.judul}</strong></td><td>${b.penulis}</td><td>${b.kategori}</td><td>${formatRupiah(b.harga)}</td><td>${b.stok}</td><td><span class="${status[1]}">${status[0]}</span></td></tr>`;
+    }).join("") : `<tr><td colspan="7" class="empty-state">Data tidak ditemukan.</td></tr>`;
+}
+searchBook.addEventListener("input", renderStock);
+stockFilter.addEventListener("change", renderStock);
+
+document.getElementById("openStockForm").addEventListener("click", () => openModal("stockModal"));
+document.getElementById("stockForm").addEventListener("submit", e => {
+    e.preventDefault();
+    dataKatalogBuku.push({
+        kode: document.getElementById("bookCode").value.trim(),
+        judul: document.getElementById("bookTitle").value.trim(),
+        penulis: document.getElementById("bookAuthor").value.trim(),
+        kategori: document.getElementById("bookCategory").value.trim(),
+        harga: Number(document.getElementById("bookPrice").value),
+        stok: Number(document.getElementById("bookStock").value)
+    });
+    saveArray("dataKatalogBuku", dataKatalogBuku);
+    renderStock();
+    closeAllModals();
+    e.target.reset();
+    showToast("Data stok berhasil ditambahkan.");
+});
+renderStock();
+</script>
+</body>
+</html>

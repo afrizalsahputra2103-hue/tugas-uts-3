@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | BukuKita</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="dashboard.html"><span class="brand-mark small">BK</span> BukuKita</a>
+    <nav aria-label="Navigasi utama">
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="stok.html">Katalog</a>
+        <a href="checkout.html">Pemesanan</a>
+        <a href="tracking.html">Tracking</a>
+        <a href="reports.html">Laporan</a>
+        <a href="history.html">History</a>
+        <button class="btn btn-outline btn-small" id="logoutBtn" type="button">Keluar</button>
+    </nav>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <div>
+            <p class="eyebrow">DASHBOARD</p>
+            <h1 id="greeting">Selamat datang!</h1>
+            <p class="muted">Kelola katalog, pemesanan, pengiriman, dan transaksi dalam satu halaman.</p>
+        </div>
+        <div class="hero-icon">📚</div>
+    </section>
+
+    <section class="stats-grid" aria-label="Ringkasan">
+        <article class="stat-card"><span>Total Buku</span><strong id="totalBooks">0</strong></article>
+        <article class="stat-card"><span>Total Stok</span><strong id="totalStock">0</strong></article>
+        <article class="stat-card"><span>Pesanan</span><strong id="totalOrders">0</strong></article>
+        <article class="stat-card"><span>Transaksi</span><strong id="totalTransactions">0</strong></article>
+    </section>
+
+    <section>
+        <div class="section-heading">
+            <div><p class="eyebrow">MENU UTAMA</p><h2>Akses Cepat</h2></div>
+        </div>
+        <div class="menu-grid">
+            <a class="menu-card" href="stok.html"><span class="menu-icon">📦</span><h3>Informasi Stok/Katalog</h3><p>Kelola daftar buku dan stok secara dinamis.</p></a>
+            <a class="menu-card" href="tracking.html"><span class="menu-icon">🚚</span><h3>Tracking Pengiriman</h3><p>Cari status pengiriman berdasarkan nomor DO.</p></a>
+            <a class="menu-card" href="reports.html"><span class="menu-icon">📊</span><h3>Laporan Pemesanan</h3><p>Lihat ringkasan pesanan dan total pembayaran.</p></a>
+            <a class="menu-card" href="history.html"><span class="menu-icon">🧾</span><h3>History Transaksi</h3><p>Lihat riwayat transaksi yang tersimpan.</p></a>
+            <a class="menu-card featured" href="checkout.html"><span class="menu-icon">🛒</span><h3>Buat Pemesanan</h3><p>Tambah atau ubah item pesanan sebelum checkout.</p></a>
+        </div>
+    </section>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const hour = new Date().getHours();
+        const greeting = hour < 11 ? "Selamat pagi!" : hour < 15 ? "Selamat siang!" : hour < 18 ? "Selamat sore!" : "Selamat malam!";
+        document.getElementById("greeting").textContent = greeting;
+        document.getElementById("totalBooks").textContent = dataKatalogBuku.length;
+        document.getElementById("totalStock").textContent = dataKatalogBuku.reduce((sum, book) => sum + book.stok, 0);
+        document.getElementById("totalOrders").textContent = dataPesanan.length;
+        document.getElementById("totalTransactions").textContent = dataTransaksi.length;
+    });
+</script>
+</body>
+</html>

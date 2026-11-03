@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Laporan | BukuKita</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="topbar"><a class="brand" href="dashboard.html"><span class="brand-mark small">BK</span> BukuKita</a><nav><a href="dashboard.html">Dashboard</a><a href="stok.html">Katalog</a><a href="checkout.html">Pemesanan</a><a href="tracking.html">Tracking</a><a href="reports.html" class="active">Laporan</a><a href="history.html">History</a></nav></header>
+<main class="container"><div class="page-header"><div><p class="eyebrow">REPORT</p><h1>Laporan Pemesanan</h1><p class="muted">Ringkasan data pemesanan dari JavaScript.</p></div></div>
+<section class="stats-grid"><article class="stat-card"><span>Jumlah Pesanan</span><strong id="rCount">0</strong></article><article class="stat-card"><span>Total Penjualan</span><strong id="rTotal">Rp0</strong></article></section>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>ID Pesanan</th><th>Nama</th><th>Tanggal</th><th>Status</th><th>Total</th></tr></thead><tbody id="reportBody"></tbody></table></div></section></main>
+<script src="js/data.js"></script><script src="js/app.js"></script><script>
+document.getElementById("rCount").textContent=dataPesanan.length;
+document.getElementById("rTotal").textContent=formatRupiah(dataPesanan.reduce((s,o)=>s+o.total,0));
+document.getElementById("reportBody").innerHTML=dataPesanan.map(o=>`<tr><td>${o.id}</td><td>${o.nama}</td><td>${o.tanggal}</td><td><span class="badge success">${o.status}</span></td><td>${formatRupiah(o.total)}</td></tr>`).join("") || `<tr><td colspan="5" class="empty-state">Belum ada pesanan.</td></tr>`;
+</script></body></html>
